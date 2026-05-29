@@ -4,6 +4,7 @@ import { events } from "@who-pays/shared";
 import { useState, useEffect } from "react";
 import { useAtomSet } from "@effect-atom/atom-react";
 import { editingExpenseId } from "../atoms";
+import { useCurrentMember } from "../context";
 
 type Member = { id: string; name: string };
 type ExistingExpense = {
@@ -39,13 +40,16 @@ export function ExpenseForm({
   onClose: () => void;
 }) {
   const setEditId = useAtomSet(editingExpenseId);
+  const { currentMemberId } = useCurrentMember();
   const today = new Date().toISOString().slice(0, 10);
 
   const [description, setDescription] = useState(existing?.description ?? "");
   const [amount, setAmount] = useState(existing ? String(existing.amount) : "");
   const [currency, setCurrency] = useState(existing?.currency ?? "EUR");
   const [exchangeRate, setExchangeRate] = useState(existing ? String(existing.exchangeRate) : "1");
-  const [paidById, setPaidById] = useState(existing?.paidByMemberId ?? members[0]?.id ?? "");
+  const [paidById, setPaidById] = useState(
+    existing?.paidByMemberId ?? currentMemberId ?? members[0]?.id ?? "",
+  );
   const [splitMode, setSplitMode] = useState<"equal" | "percentage" | "exact" | "shares">(
     (existing?.splitMode as any) ?? "equal",
   );

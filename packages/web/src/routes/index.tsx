@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { Logo } from "../components/Logo";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -17,8 +18,11 @@ function Landing() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Who Pays?</h1>
-        <p className="text-gray-500 mb-8">Track shared expenses, settle up fairly.</p>
+        <div className="flex flex-col items-center mb-8">
+          <Logo className="w-16 h-16 mb-4" />
+          <h1 className="text-3xl font-bold text-gray-900">Who Pays?</h1>
+          <p className="text-gray-500 mt-1 text-center">Track shared expenses, settle up fairly.</p>
+        </div>
 
         <div className="space-y-4">
           <div>
