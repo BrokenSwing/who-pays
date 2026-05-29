@@ -16,4 +16,4 @@ COPY packages/api/tsconfig.json ./packages/api/tsconfig.json
 
 ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["node_modules/.bin/tsx", "packages/api/src/main.ts"]
+CMD ["packages/api/node_modules/.bin/tsx", "packages/api/src/main.ts"]

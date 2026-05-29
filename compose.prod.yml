@@ -16,8 +16,6 @@ services:
     build:
       context: .
       dockerfile: packages/web/Dockerfile
-    ports:
-      - "${PORT:-80}:80"
     depends_on:
       - api
     restart: unless-stopped
