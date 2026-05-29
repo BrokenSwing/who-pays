@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQuery, useStore } from "@livestore/react"
-import { membersQuery$, expensesQuery$, splitsQuery$, settlementsQuery$ } from "../../../queries"
+import { membersQuery$, expensesQuery$, splitsQuery$, settlementsQuery$, groupQuery$ } from "../../../queries"
 import { computeBalances, minimizeCashFlow } from "@who-pays/shared"
 import { MemberList } from "../../../components/MemberList"
 import { ExpenseList } from "../../../components/ExpenseList"
@@ -8,8 +8,9 @@ import { BalanceCard } from "../../../components/BalanceCard"
 import { ExpenseForm } from "../../../components/ExpenseForm"
 import { useAtomValue, useAtomSet } from "@effect-atom/atom-react"
 import { showAddExpense, editingExpenseId } from "../../../atoms"
-import { Logo } from "../../../components/Logo"
-import { Link2, Plus } from "lucide-react"
+import { upsertGroup } from "../../../storage"
+import { useEffect } from "react"
+import { ChevronLeft, Link2, Plus } from "lucide-react"
 
 export const Route = createFileRoute("/g/$groupToken/")({
   component: GroupPage,
@@ -17,16 +18,23 @@ export const Route = createFileRoute("/g/$groupToken/")({
 
 function GroupPage() {
   const { groupToken } = Route.useParams()
+  const navigate = useNavigate()
   const members = useQuery(membersQuery$)
   const expenses = useQuery(expensesQuery$)
   const splits = useQuery(splitsQuery$)
   const settlements = useQuery(settlementsQuery$)
+  const group = useQuery(groupQuery$)
   const { store } = useStore()
 
   const addExpenseVisible = useAtomValue(showAddExpense)
   const setAddExpense = useAtomSet(showAddExpense)
   const editId = useAtomValue(editingExpenseId)
   const setEditId = useAtomSet(editingExpenseId)
+
+  // Persist this group in the local group list whenever we know its name
+  useEffect(() => {
+    if (group) upsertGroup(group.id, group.name)
+  }, [group?.id, group?.name])
 
   const balances = computeBalances(members, expenses, splits, settlements)
   const transfers = minimizeCashFlow(balances)
@@ -39,18 +47,28 @@ function GroupPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Logo className="w-7 h-7" />
-            <span className="text-base font-semibold text-foreground">Who Pays?</span>
-          </div>
-          <button onClick={copyLink} className="btn-outline gap-1.5">
-            <Link2 size={14} />
-            Copy invite link
+      {/* Sticky mobile header */}
+      <header className="sticky top-0 z-10 bg-card border-b border-border">
+        <div className="max-w-2xl mx-auto px-2 h-13 flex items-center gap-1">
+          <button
+            onClick={() => navigate({ to: "/" })}
+            className="btn-ghost h-9 w-9 p-0 text-muted-foreground shrink-0"
+            aria-label="Back to groups"
+          >
+            <ChevronLeft size={20} />
           </button>
-        </header>
 
+          <span className="flex-1 text-sm font-semibold text-foreground truncate px-1">
+            {group?.name ?? "…"}
+          </span>
+
+          <button onClick={copyLink} className="btn-ghost h-9 w-9 p-0 text-muted-foreground shrink-0" aria-label="Copy invite link">
+            <Link2 size={17} />
+          </button>
+        </div>
+      </header>
+
+      <div className="max-w-2xl mx-auto px-4 py-5 space-y-6">
         <MemberList members={members} store={store} groupToken={groupToken} />
 
         <BalanceCard balances={balances} members={members} transfers={transfers} />

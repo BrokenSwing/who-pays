@@ -41,12 +41,12 @@ function GroupRoute() {
         storeId={groupToken}
         batchUpdates={unstable_batchedUpdates}
         renderLoading={() => (
-          <div className="min-h-screen flex items-center justify-center text-gray-400">
+          <div className="min-h-screen flex items-center justify-center text-muted-foreground text-sm">
             Loading…
           </div>
         )}
         renderError={(e) => (
-          <div className="min-h-screen flex items-center justify-center text-red-500">
+          <div className="min-h-screen flex items-center justify-center text-destructive text-sm">
             {String(e)}
           </div>
         )}
