@@ -11,42 +11,32 @@ export function Logo({ className }: LogoProps) {
       aria-label="Who Pays logo"
       role="img"
     >
-      <defs>
-        <clipPath id="who-pays-logo-clip">
-          <circle cx="50" cy="50" r="44" />
-        </clipPath>
-      </defs>
-
-      {/* Three equal pie segments clipped to outer circle */}
-      <g clipPath="url(#who-pays-logo-clip)">
-        {/* Top segment: -90° → 30° */}
-        <path
-          d="M50,50 L50,6 A44,44 0 0,1 88.1,72 Z"
-          fill="#1d4ed8"
-          stroke="white"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        {/* Bottom-right segment: 30° → 150° */}
-        <path
-          d="M50,50 L88.1,72 A44,44 0 0,1 11.9,72 Z"
-          fill="#2563eb"
-          stroke="white"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-        {/* Bottom-left segment: 150° → 270° */}
-        <path
-          d="M50,50 L11.9,72 A44,44 0 0,1 50,6 Z"
-          fill="#3b82f6"
-          stroke="white"
-          strokeWidth="3"
-          strokeLinejoin="round"
-        />
-      </g>
-
-      {/* Donut hole */}
-      <circle cx="50" cy="50" r="15" fill="white" />
+      {/* Upper receipt body — rounded top corners, flat bottom */}
+      <path
+        d="M15,13 Q15,5 23,5 L77,5 Q85,5 85,13 L85,55 L15,55 Z"
+        fill="#2563eb"
+      />
+      {/* Lower tear section — scalloped bottom.
+          ctrl1 x matches side x so the join tangent is vertical (smooth). */}
+      <path
+        d="M15,55 L85,55 L85,72
+           C85,90 62,90 62,72
+           C62,90 38,90 38,72
+           C38,90 15,90 15,72
+           Z"
+        fill="#3b82f6"
+      />
+      {/* Dashed split line */}
+      <line
+        x1="15" y1="55" x2="85" y2="55"
+        stroke="white" strokeWidth="2.5" strokeDasharray="5 3"
+      />
+      {/* Line items */}
+      <rect x="23" y="18" width="46" height="4" rx="2" fill="white" opacity="0.9" />
+      <rect x="23" y="28" width="34" height="4" rx="2" fill="white" opacity="0.9" />
+      <rect x="23" y="38" width="40" height="4" rx="2" fill="white" opacity="0.9" />
+      {/* Total row on lower section */}
+      <rect x="23" y="61" width="50" height="4" rx="2" fill="white" opacity="0.85" />
     </svg>
   );
 }
