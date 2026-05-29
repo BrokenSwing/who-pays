@@ -2,11 +2,30 @@ import { useQuery, useStore } from "@livestore/react"
 import { queryDb, nanoid } from "@livestore/livestore"
 import { events, tables } from "@who-pays/shared"
 import { useState, type ReactNode } from "react"
+import { Logo } from "./Logo"
+import { Field } from "./Field"
+import { X, Plus } from "lucide-react"
 
 const groupQuery$ = queryDb(tables.groups.first({ fallback: () => null }))
 const membersQuery$ = queryDb(tables.members.where({ deletedAt: null }))
 
-// ── Create form (new group) ──────────────────────────────────────────────────
+// ── Shared card shell ────────────────────────────────────────────────────────
+
+function OnboardingShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="bg-card rounded-xl shadow-md ring-1 ring-border p-8 w-full max-w-sm space-y-6">
+        <div className="flex items-center gap-3">
+          <Logo className="w-9 h-9 shrink-0" />
+          <h1 className="text-lg font-semibold text-foreground">Who Pays?</h1>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// ── Create form ──────────────────────────────────────────────────────────────
 
 function CreateGroupForm({
   groupToken,
@@ -18,7 +37,7 @@ function CreateGroupForm({
   const { store } = useStore()
   const [groupName, setGroupName] = useState("")
   const [yourName, setYourName] = useState("")
-  const [otherNames, setOtherNames] = useState<string[]>([""])
+  const [otherNames, setOtherNames] = useState<string[]>([])
 
   function addRow() {
     setOtherNames((prev) => [...prev, ""])
@@ -44,86 +63,75 @@ function CreateGroupForm({
     store.commit(
       events.groupCreated({ id: groupToken, name: trimmedGroup, defaultCurrency: "EUR" }),
       events.memberAdded({ id: youId, groupId: groupToken, name: trimmedYou }),
-      ...others.map((name) =>
-        events.memberAdded({ id: nanoid(), groupId: groupToken, name })
-      ),
+      ...others.map((name) => events.memberAdded({ id: nanoid(), groupId: groupToken, name })),
     )
 
     onCreated(youId)
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md space-y-5">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Create group</h1>
-          <p className="text-sm text-gray-500 mt-1">Set up your group and add the people splitting expenses.</p>
-        </div>
+    <OnboardingShell>
+      <div>
+        <p className="text-sm font-medium text-foreground">Create a group</p>
+        <p className="text-sm text-muted-foreground mt-0.5">Add the people splitting expenses.</p>
+      </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Group name</label>
+      <div className="space-y-4">
+        <Field label="Group name">
           <input
             type="text"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             placeholder="Weekend trip, Roommates…"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Your name</label>
+        <Field label="Your name">
           <input
             type="text"
             value={yourName}
             onChange={(e) => setYourName(e.target.value)}
             placeholder="Alice"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Other members</label>
-          <div className="space-y-2">
-            {otherNames.map((name, i) => (
-              <div key={i} className="flex gap-2">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => updateRow(i, e.target.value)}
-                  placeholder="Name"
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => removeRow(i)}
-                  className="text-gray-400 hover:text-red-500 px-2"
-                  aria-label="Remove"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={addRow}
-            className="mt-2 text-sm text-blue-600 hover:underline"
-          >
-            + Add member
+        <div className="space-y-2">
+          <span className="text-sm font-medium text-foreground">Other members</span>
+          {otherNames.map((name, i) => (
+            <div key={i} className="flex gap-2">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => updateRow(i, e.target.value)}
+                placeholder="Name"
+                className="input"
+              />
+              <button
+                onClick={() => removeRow(i)}
+                className="btn-ghost px-2 text-muted-foreground hover:text-destructive"
+                aria-label="Remove"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ))}
+          <button onClick={addRow} className="btn-outline w-full gap-1.5">
+            <Plus size={15} />
+            Add member
           </button>
         </div>
-
-        <button
-          onClick={submit}
-          className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors"
-        >
-          Create group
-        </button>
       </div>
-    </div>
+
+      <button onClick={submit} className="btn-primary w-full">
+        Create group
+      </button>
+    </OnboardingShell>
   )
 }
 
-// ── Join form (existing group, unknown visitor) ──────────────────────────────
+// ── Join form ────────────────────────────────────────────────────────────────
 
 type Member = { id: string; name: string }
 
@@ -140,10 +148,6 @@ function JoinForm({
   const [newName, setNewName] = useState("")
   const [showNewName, setShowNewName] = useState(false)
 
-  function selectExisting(id: string) {
-    onJoined(id)
-  }
-
   function joinAsNew() {
     const name = newName.trim()
     if (!name) { alert("Enter your name"); return }
@@ -153,53 +157,48 @@ function JoinForm({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md space-y-5">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Who are you?</h1>
-          <p className="text-sm text-gray-500 mt-1">Pick your name to see your share of expenses.</p>
-        </div>
-
-        <div className="space-y-2">
-          {members.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => selectExisting(m.id)}
-              className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-colors text-gray-800 font-medium"
-            >
-              {m.name}
-            </button>
-          ))}
-        </div>
-
-        {!showNewName ? (
-          <button
-            onClick={() => setShowNewName(true)}
-            className="w-full text-sm text-gray-500 hover:text-gray-700 py-2"
-          >
-            I'm not listed — add me
-          </button>
-        ) : (
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && joinAsNew()}
-              placeholder="Your name"
-              autoFocus
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={joinAsNew}
-              className="w-full bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 transition-colors"
-            >
-              Join group
-            </button>
-          </div>
-        )}
+    <OnboardingShell>
+      <div>
+        <p className="text-sm font-medium text-foreground">Who are you?</p>
+        <p className="text-sm text-muted-foreground mt-0.5">Pick your name to see your share.</p>
       </div>
-    </div>
+
+      <div className="space-y-1.5">
+        {members.map((m) => (
+          <button
+            key={m.id}
+            onClick={() => onJoined(m.id)}
+            className="w-full text-left px-4 py-2.5 rounded-lg border border-border bg-card hover:bg-accent hover:text-accent-foreground hover:border-transparent transition-colors text-sm font-medium"
+          >
+            {m.name}
+          </button>
+        ))}
+      </div>
+
+      {!showNewName ? (
+        <button
+          onClick={() => setShowNewName(true)}
+          className="btn-ghost w-full text-muted-foreground"
+        >
+          I'm not listed — add me
+        </button>
+      ) : (
+        <div className="space-y-2">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && joinAsNew()}
+            placeholder="Your name"
+            autoFocus
+            className="input"
+          />
+          <button onClick={joinAsNew} className="btn-primary w-full">
+            Join group
+          </button>
+        </div>
+      )}
+    </OnboardingShell>
   )
 }
 

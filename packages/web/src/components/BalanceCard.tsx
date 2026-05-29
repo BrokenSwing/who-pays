@@ -1,52 +1,67 @@
-import type { MemberBalance, Transfer } from "@who-pays/shared";
+import type { MemberBalance, Transfer } from "@who-pays/shared"
+import { ArrowRight } from "lucide-react"
 
 export function BalanceCard({
   balances,
   members,
   transfers,
 }: {
-  balances: readonly MemberBalance[];
-  members: readonly { id: string; name: string }[];
-  transfers: readonly Transfer[];
+  balances: readonly MemberBalance[]
+  members: readonly { id: string; name: string }[]
+  transfers: readonly Transfer[]
 }) {
-  if (members.length === 0) return null;
+  if (members.length === 0) return null
 
   return (
-    <section>
-      <h2 className="font-semibold text-gray-800 mb-3">Balances</h2>
-      <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-        {balances.map((b) => (
-          <div key={b.memberId} className="flex items-center justify-between px-4 py-2.5">
-            <span className="text-sm text-gray-700">{b.memberName}</span>
-            <span
-              className={`text-sm font-medium tabular-nums ${
-                b.net > 0 ? "text-green-600" : b.net < 0 ? "text-red-500" : "text-gray-400"
-              }`}
+    <div className="space-y-4">
+      <section>
+        <h2 className="text-sm font-semibold text-foreground mb-2">Balances</h2>
+        <div className="rounded-lg border border-border bg-card shadow-xs overflow-hidden">
+          {balances.map((b, i) => (
+            <div
+              key={b.memberId}
+              className={`flex items-center justify-between px-4 py-2.5 ${i < balances.length - 1 ? "border-b border-border" : ""}`}
             >
-              {b.net > 0 ? "+" : ""}
-              {b.net.toFixed(2)}
-            </span>
-          </div>
-        ))}
-      </div>
+              <span className="text-sm text-foreground">{b.memberName}</span>
+              <span
+                className={`text-sm font-medium tabular-nums ${
+                  b.net > 0
+                    ? "text-primary"
+                    : b.net < 0
+                      ? "text-destructive"
+                      : "text-muted-foreground"
+                }`}
+              >
+                {b.net > 0 ? "+" : ""}
+                {b.net.toFixed(2)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {transfers.length > 0 && (
-        <>
-          <h2 className="font-semibold text-gray-800 mb-3 mt-4">Suggested transfers</h2>
-          <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+        <section>
+          <h2 className="text-sm font-semibold text-foreground mb-2">Suggested transfers</h2>
+          <div className="rounded-lg border border-border bg-card shadow-xs overflow-hidden">
             {transfers.map((t, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-2.5">
-                <span className="text-sm text-gray-700">
-                  {t.fromMemberName} → {t.toMemberName}
+              <div
+                key={i}
+                className={`flex items-center justify-between px-4 py-2.5 ${i < transfers.length - 1 ? "border-b border-border" : ""}`}
+              >
+                <span className="text-sm text-foreground flex items-center gap-1.5">
+                  {t.fromMemberName}
+                  <ArrowRight size={13} className="text-muted-foreground shrink-0" />
+                  {t.toMemberName}
                 </span>
-                <span className="text-sm font-medium tabular-nums text-gray-700">
+                <span className="text-sm font-medium tabular-nums text-foreground">
                   {t.amount.toFixed(2)}
                 </span>
               </div>
             ))}
           </div>
-        </>
+        </section>
       )}
-    </section>
-  );
+    </div>
+  )
 }
