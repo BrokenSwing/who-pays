@@ -28,11 +28,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes("node_modules")) return
-          if (id.includes("@livestore") || id.includes("wa-sqlite")) return "livestore"
-          if (id.includes("effect") || id.includes("@effect")) return "effect"
-          if (id.includes("@tanstack")) return "tanstack"
-          if (id.includes("react")) return "react"
+          if (!id.includes("node_modules")) return;
+          if (id.includes("@livestore") || id.includes("wa-sqlite")) return "livestore";
+          if (id.includes("effect") || id.includes("@effect")) return "effect";
+          if (id.includes("@tanstack")) return "tanstack";
+          if (id.includes("react")) return "react";
         },
       },
     },
