@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: packages/api/Dockerfile
+    environment:
+      PORT: "3000"
+      DATABASE_URL: /data/events.db
+      # Must match the public-facing origin of the web service
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN:-http://localhost}
+    volumes:
+      - db_data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+    ports:
+      - "${PORT:-80}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  db_data:
