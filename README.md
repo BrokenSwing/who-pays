@@ -13,13 +13,13 @@ A local-first expense-splitting app. Track shared expenses and settle up fairly 
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React + Vite + TanStack Router + Tailwind CSS v4 |
-| State | LiveStore (local-first, event-sourced, OPFS persistence) |
-| Sync | `@effect/rpc` over WebSocket |
-| Backend | Effect + `@effect/sql-sqlite-node` |
-| Monorepo | pnpm workspaces |
+| Layer    | Technology                                               |
+| -------- | -------------------------------------------------------- |
+| Frontend | React + Vite + TanStack Router + Tailwind CSS v4         |
+| State    | LiveStore (local-first, event-sourced, OPFS persistence) |
+| Sync     | `@effect/rpc` over WebSocket                             |
+| Backend  | Effect + `@effect/sql-sqlite-node`                       |
+| Monorepo | pnpm workspaces                                          |
 
 ## Packages
 

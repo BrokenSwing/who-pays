@@ -7,13 +7,13 @@
     "./rpc/*": "./src/rpc/*.ts",
     "./domain/*": "./src/domain/*.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@effect/rpc": "0.75.0",
     "@livestore/livestore": "^0.3.0",
     "effect": "3.21.1"
-  },
-  "scripts": {
-    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

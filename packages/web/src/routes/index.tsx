@@ -1,17 +1,17 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useState } from "react"
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: Landing,
-})
+});
 
 function Landing() {
-  const navigate = useNavigate()
-  const [name, setName] = useState("")
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
 
   function createGroup() {
-    const token = crypto.randomUUID()
-    navigate({ to: "/g/$groupToken", params: { groupToken: token } })
+    const token = crypto.randomUUID();
+    navigate({ to: "/g/$groupToken", params: { groupToken: token } });
   }
 
   return (
@@ -45,5 +45,5 @@ function Landing() {
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import { makeSchema, State } from "@livestore/livestore"
-import { events } from "./events.ts"
-import { tables } from "./tables.ts"
-import { appMaterializers } from "./materializers.ts"
+import { makeSchema, State } from "@livestore/livestore";
+import { events } from "./events.ts";
+import { tables } from "./tables.ts";
+import { appMaterializers } from "./materializers.ts";
 
-export { events, tables }
+export { events, tables };
 
 export const schema = makeSchema({
   events,
@@ -11,4 +11,4 @@ export const schema = makeSchema({
     tables,
     materializers: appMaterializers,
   }),
-})
+});

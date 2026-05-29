@@ -8,97 +8,95 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as GGroupTokenRouteImport } from './routes/g/$groupToken'
-import { Route as GGroupTokenIndexRouteImport } from './routes/g/$groupToken/index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as GGroupTokenRouteImport } from "./routes/g/$groupToken";
+import { Route as GGroupTokenIndexRouteImport } from "./routes/g/$groupToken/index";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const GGroupTokenRoute = GGroupTokenRouteImport.update({
-  id: '/g/$groupToken',
-  path: '/g/$groupToken',
+  id: "/g/$groupToken",
+  path: "/g/$groupToken",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const GGroupTokenIndexRoute = GGroupTokenIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => GGroupTokenRoute,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/g/$groupToken': typeof GGroupTokenRouteWithChildren
-  '/g/$groupToken/': typeof GGroupTokenIndexRoute
+  "/": typeof IndexRoute;
+  "/g/$groupToken": typeof GGroupTokenRouteWithChildren;
+  "/g/$groupToken/": typeof GGroupTokenIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/g/$groupToken': typeof GGroupTokenIndexRoute
+  "/": typeof IndexRoute;
+  "/g/$groupToken": typeof GGroupTokenIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/g/$groupToken': typeof GGroupTokenRouteWithChildren
-  '/g/$groupToken/': typeof GGroupTokenIndexRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/g/$groupToken": typeof GGroupTokenRouteWithChildren;
+  "/g/$groupToken/": typeof GGroupTokenIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/g/$groupToken' | '/g/$groupToken/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/g/$groupToken'
-  id: '__root__' | '/' | '/g/$groupToken' | '/g/$groupToken/'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: "/" | "/g/$groupToken" | "/g/$groupToken/";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/g/$groupToken";
+  id: "__root__" | "/" | "/g/$groupToken" | "/g/$groupToken/";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  GGroupTokenRoute: typeof GGroupTokenRouteWithChildren
+  IndexRoute: typeof IndexRoute;
+  GGroupTokenRoute: typeof GGroupTokenRouteWithChildren;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/g/$groupToken': {
-      id: '/g/$groupToken'
-      path: '/g/$groupToken'
-      fullPath: '/g/$groupToken'
-      preLoaderRoute: typeof GGroupTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/g/$groupToken/': {
-      id: '/g/$groupToken/'
-      path: '/'
-      fullPath: '/g/$groupToken/'
-      preLoaderRoute: typeof GGroupTokenIndexRouteImport
-      parentRoute: typeof GGroupTokenRoute
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/g/$groupToken": {
+      id: "/g/$groupToken";
+      path: "/g/$groupToken";
+      fullPath: "/g/$groupToken";
+      preLoaderRoute: typeof GGroupTokenRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/g/$groupToken/": {
+      id: "/g/$groupToken/";
+      path: "/";
+      fullPath: "/g/$groupToken/";
+      preLoaderRoute: typeof GGroupTokenIndexRouteImport;
+      parentRoute: typeof GGroupTokenRoute;
+    };
   }
 }
 
 interface GGroupTokenRouteChildren {
-  GGroupTokenIndexRoute: typeof GGroupTokenIndexRoute
+  GGroupTokenIndexRoute: typeof GGroupTokenIndexRoute;
 }
 
 const GGroupTokenRouteChildren: GGroupTokenRouteChildren = {
   GGroupTokenIndexRoute: GGroupTokenIndexRoute,
-}
+};
 
-const GGroupTokenRouteWithChildren = GGroupTokenRoute._addFileChildren(
-  GGroupTokenRouteChildren,
-)
+const GGroupTokenRouteWithChildren = GGroupTokenRoute._addFileChildren(GGroupTokenRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GGroupTokenRoute: GGroupTokenRouteWithChildren,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

@@ -1,58 +1,57 @@
-import { SqlClient } from "@effect/sql/SqlClient"
-import * as SqliteClient from "@effect/sql-sqlite-node/SqliteClient"
-import * as Effect from "effect/Effect"
-import * as Layer from "effect/Layer"
-import type { EncodedEvent } from "@who-pays/shared"
+import { SqlClient } from "@effect/sql/SqlClient";
+import * as SqliteClient from "@effect/sql-sqlite-node/SqliteClient";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import type { EncodedEvent } from "@who-pays/shared";
 
-declare const _storeIdBrand: unique symbol
-export type ValidatedStoreId = string & { readonly [_storeIdBrand]: true }
+declare const _storeIdBrand: unique symbol;
+export type ValidatedStoreId = string & { readonly [_storeIdBrand]: true };
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function tableName(storeId: ValidatedStoreId): string {
-  return `eventlog_${storeId.replace(/-/g, "_")}`
+  return `eventlog_${storeId.replace(/-/g, "_")}`;
 }
 
 export class EventLog extends Effect.Service<EventLog>()("EventLog", {
   effect: Effect.gen(function* () {
-    const sql = yield* SqlClient
+    const sql = yield* SqlClient;
 
     const ensureStore = (storeId: string): Effect.Effect<ValidatedStoreId, Error> =>
       Effect.gen(function* () {
         if (!UUID_PATTERN.test(storeId)) {
-          return yield* Effect.fail(new Error("Invalid storeId"))
+          return yield* Effect.fail(new Error("Invalid storeId"));
         }
-        const validated = storeId as ValidatedStoreId
-        const tbl = tableName(validated)
+        const validated = storeId as ValidatedStoreId;
+        const tbl = tableName(validated);
         yield* sql.unsafe(
-          `CREATE TABLE IF NOT EXISTS "${tbl}" (seq INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT NOT NULL, created_at INTEGER NOT NULL DEFAULT (unixepoch('now') * 1000))`
-        )
-        return validated
-      })
+          `CREATE TABLE IF NOT EXISTS "${tbl}" (seq INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT NOT NULL, created_at INTEGER NOT NULL DEFAULT (unixepoch('now') * 1000))`,
+        );
+        return validated;
+      });
 
     const append = (storeId: ValidatedStoreId, events: readonly EncodedEvent[]) =>
       Effect.gen(function* () {
-        const tbl = tableName(storeId)
+        const tbl = tableName(storeId);
         for (const event of events) {
-          yield* sql.unsafe(`INSERT INTO "${tbl}" (data) VALUES (?)`, [JSON.stringify(event)])
+          yield* sql.unsafe(`INSERT INTO "${tbl}" (data) VALUES (?)`, [JSON.stringify(event)]);
         }
-      })
+      });
 
     const getEvents = (storeId: ValidatedStoreId, afterGlobalSeq: number) =>
       Effect.gen(function* () {
-        const tbl = tableName(storeId)
-        const rows = yield* sql.unsafe(
-          `SELECT data FROM "${tbl}" WHERE seq > ? ORDER BY seq ASC`,
-          [afterGlobalSeq]
-        )
-        return rows.map((row: any) => JSON.parse(row.data) as EncodedEvent)
-      })
+        const tbl = tableName(storeId);
+        const rows = yield* sql.unsafe(`SELECT data FROM "${tbl}" WHERE seq > ? ORDER BY seq ASC`, [
+          afterGlobalSeq,
+        ]);
+        return rows.map((row: any) => JSON.parse(row.data) as EncodedEvent);
+      });
 
-    return { ensureStore, append, getEvents }
+    return { ensureStore, append, getEvents };
   }),
 }) {}
 
 export const EventLogLayer = Layer.provide(
   EventLog.Default,
-  SqliteClient.layer({ filename: process.env.DATABASE_URL ?? "./data/events.db" })
-)
+  SqliteClient.layer({ filename: process.env.DATABASE_URL ?? "./data/events.db" }),
+);

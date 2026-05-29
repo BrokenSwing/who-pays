@@ -1,17 +1,17 @@
-import { Events } from "@livestore/livestore"
-import * as Schema from "effect/Schema"
+import { Events } from "@livestore/livestore";
+import * as Schema from "effect/Schema";
 
-const Id = Schema.String.pipe(Schema.maxLength(64))
-const Name = Schema.String.pipe(Schema.minLength(1), Schema.maxLength(100))
-const CurrencyCode = Schema.String.pipe(Schema.minLength(1), Schema.maxLength(10))
-const Description = Schema.String.pipe(Schema.maxLength(500))
-const PositiveAmount = Schema.Number.pipe(Schema.positive())
-const PositiveRate = Schema.Number.pipe(Schema.positive())
+const Id = Schema.String.pipe(Schema.maxLength(64));
+const Name = Schema.String.pipe(Schema.minLength(1), Schema.maxLength(100));
+const CurrencyCode = Schema.String.pipe(Schema.minLength(1), Schema.maxLength(10));
+const Description = Schema.String.pipe(Schema.maxLength(500));
+const PositiveAmount = Schema.Number.pipe(Schema.positive());
+const PositiveRate = Schema.Number.pipe(Schema.positive());
 
 const Split = Schema.Struct({
   memberId: Id,
   value: Schema.Number,
-})
+});
 
 export const events = {
   groupCreated: Events.synced({
@@ -80,10 +80,9 @@ export const events = {
       currency: Schema.optionalWith(CurrencyCode, { exact: true }),
       exchangeRate: Schema.optionalWith(PositiveRate, { exact: true }),
       paidByMemberId: Schema.optionalWith(Id, { exact: true }),
-      splitMode: Schema.optionalWith(
-        Schema.Literal("equal", "percentage", "exact", "shares"),
-        { exact: true }
-      ),
+      splitMode: Schema.optionalWith(Schema.Literal("equal", "percentage", "exact", "shares"), {
+        exact: true,
+      }),
       date: Schema.optionalWith(Schema.Number, { exact: true }),
       splits: Schema.optionalWith(Schema.Array(Split), { exact: true }),
     }),
@@ -115,7 +114,7 @@ export const events = {
       id: Id,
     }),
   }),
-}
+};
 
 export const KNOWN_EVENT_NAMES = new Set([
   "v1.GroupCreated",
@@ -128,4 +127,4 @@ export const KNOWN_EVENT_NAMES = new Set([
   "v1.ExpenseDeleted",
   "v1.SettlementCreated",
   "v1.SettlementDeleted",
-])
+]);

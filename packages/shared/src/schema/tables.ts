@@ -1,4 +1,4 @@
-import { State } from "@livestore/livestore"
+import { State } from "@livestore/livestore";
 
 export const groups = State.SQLite.table({
   name: "groups",
@@ -8,7 +8,7 @@ export const groups = State.SQLite.table({
     defaultCurrency: State.SQLite.text({ default: "EUR" }),
     createdAt: State.SQLite.datetime(),
   },
-})
+});
 
 export const members = State.SQLite.table({
   name: "members",
@@ -19,7 +19,7 @@ export const members = State.SQLite.table({
     createdAt: State.SQLite.datetime(),
     deletedAt: State.SQLite.datetime({ nullable: true }),
   },
-})
+});
 
 export const expenses = State.SQLite.table({
   name: "expenses",
@@ -37,7 +37,7 @@ export const expenses = State.SQLite.table({
     updatedAt: State.SQLite.datetime(),
     deletedAt: State.SQLite.datetime({ nullable: true }),
   },
-})
+});
 
 export const expense_splits = State.SQLite.table({
   name: "expense_splits",
@@ -47,7 +47,7 @@ export const expense_splits = State.SQLite.table({
     memberId: State.SQLite.text({ default: "" }),
     value: State.SQLite.real({ default: 0 }),
   },
-})
+});
 
 export const settlements = State.SQLite.table({
   name: "settlements",
@@ -61,6 +61,6 @@ export const settlements = State.SQLite.table({
     date: State.SQLite.datetime(),
     deletedAt: State.SQLite.datetime({ nullable: true }),
   },
-})
+});
 
-export const tables = { groups, members, expenses, expense_splits, settlements }
+export const tables = { groups, members, expenses, expense_splits, settlements };

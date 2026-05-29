@@ -1,43 +1,38 @@
-import type { Store } from "@livestore/livestore"
-import { events } from "@who-pays/shared"
-import { nanoid } from "@livestore/livestore"
-import { useState } from "react"
+import type { Store } from "@livestore/livestore";
+import { events } from "@who-pays/shared";
+import { nanoid } from "@livestore/livestore";
+import { useState } from "react";
 
-type Member = { id: string; name: string; deletedAt: Date | null }
+type Member = { id: string; name: string; deletedAt: Date | null };
 
 export function MemberList({
   members,
   store,
   groupToken,
 }: {
-  members: readonly Member[]
-  store: Store
-  groupToken: string
+  members: readonly Member[];
+  store: Store;
+  groupToken: string;
 }) {
-  const [newName, setNewName] = useState("")
-  const [adding, setAdding] = useState(false)
+  const [newName, setNewName] = useState("");
+  const [adding, setAdding] = useState(false);
 
   function addMember() {
-    if (!newName.trim()) return
-    store.commit(
-      events.memberAdded({ id: nanoid(), groupId: groupToken, name: newName.trim() }),
-    )
-    setNewName("")
-    setAdding(false)
+    if (!newName.trim()) return;
+    store.commit(events.memberAdded({ id: nanoid(), groupId: groupToken, name: newName.trim() }));
+    setNewName("");
+    setAdding(false);
   }
 
   function removeMember(id: string) {
-    store.commit(events.memberRemoved({ id }))
+    store.commit(events.memberRemoved({ id }));
   }
 
   return (
     <section>
       <div className="flex items-center justify-between mb-2">
         <h2 className="font-semibold text-gray-800">Members</h2>
-        <button
-          onClick={() => setAdding(true)}
-          className="text-sm text-blue-600 hover:underline"
-        >
+        <button onClick={() => setAdding(true)} className="text-sm text-blue-600 hover:underline">
           + Add
         </button>
       </div>
@@ -68,8 +63,8 @@ export function MemberList({
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") addMember()
-              if (e.key === "Escape") setAdding(false)
+              if (e.key === "Enter") addMember();
+              if (e.key === "Escape") setAdding(false);
             }}
             placeholder="Name"
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -89,5 +84,5 @@ export function MemberList({
         </div>
       )}
     </section>
-  )
+  );
 }

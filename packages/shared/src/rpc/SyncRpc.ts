@@ -1,6 +1,6 @@
-import * as Rpc from "@effect/rpc/Rpc"
-import * as RpcGroup from "@effect/rpc/RpcGroup"
-import * as Schema from "effect/Schema"
+import * as Rpc from "@effect/rpc/Rpc";
+import * as RpcGroup from "@effect/rpc/RpcGroup";
+import * as Schema from "effect/Schema";
 
 // Matches AnyEncodedGlobal from @livestore/common — JSON-serializable
 export const EncodedEvent = Schema.Struct({
@@ -10,14 +10,14 @@ export const EncodedEvent = Schema.Struct({
   parentSeqNum: Schema.Number.pipe(Schema.greaterThanOrEqualTo(0)),
   clientId: Schema.String.pipe(Schema.maxLength(128)),
   sessionId: Schema.String.pipe(Schema.maxLength(128)),
-})
-export type EncodedEvent = typeof EncodedEvent.Type
+});
+export type EncodedEvent = typeof EncodedEvent.Type;
 
 export const SyncBatch = Schema.Struct({
   batch: Schema.Array(EncodedEvent),
   remaining: Schema.Number,
-})
-export type SyncBatch = typeof SyncBatch.Type
+});
+export type SyncBatch = typeof SyncBatch.Type;
 
 export class SyncRpcs extends RpcGroup.make(
   Rpc.make("Push", {
@@ -36,5 +36,5 @@ export class SyncRpcs extends RpcGroup.make(
     success: SyncBatch,
     error: Schema.String,
     stream: true,
-  })
+  }),
 ) {}

@@ -1,15 +1,15 @@
-import type { MemberBalance, Transfer } from "@who-pays/shared"
+import type { MemberBalance, Transfer } from "@who-pays/shared";
 
 export function BalanceCard({
   balances,
   members,
   transfers,
 }: {
-  balances: readonly MemberBalance[]
-  members: readonly { id: string; name: string }[]
-  transfers: readonly Transfer[]
+  balances: readonly MemberBalance[];
+  members: readonly { id: string; name: string }[];
+  transfers: readonly Transfer[];
 }) {
-  if (members.length === 0) return null
+  if (members.length === 0) return null;
 
   return (
     <section>
@@ -48,5 +48,5 @@ export function BalanceCard({
         </>
       )}
     </section>
-  )
+  );
 }

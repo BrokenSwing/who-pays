@@ -1,14 +1,14 @@
-import { useQuery, useStore } from "@livestore/react"
-import { queryDb } from "@livestore/livestore"
-import { events, tables } from "@who-pays/shared"
-import { nanoid } from "@livestore/livestore"
-import { useEffect } from "react"
+import { useQuery, useStore } from "@livestore/react";
+import { queryDb } from "@livestore/livestore";
+import { events, tables } from "@who-pays/shared";
+import { nanoid } from "@livestore/livestore";
+import { useEffect } from "react";
 
-const groupQuery$ = queryDb(tables.groups.first({ fallback: () => null }))
+const groupQuery$ = queryDb(tables.groups.first({ fallback: () => null }));
 
 export function GroupInit({ groupToken, groupName }: { groupToken: string; groupName?: string }) {
-  const group = useQuery(groupQuery$)
-  const { store } = useStore()
+  const group = useQuery(groupQuery$);
+  const { store } = useStore();
 
   useEffect(() => {
     if (group === null) {
@@ -18,9 +18,9 @@ export function GroupInit({ groupToken, groupName }: { groupToken: string; group
           name: groupName ?? "My Group",
           defaultCurrency: "EUR",
         }),
-      )
+      );
     }
-  }, [group, groupToken, groupName, store])
+  }, [group, groupToken, groupName, store]);
 
-  return null
+  return null;
 }
