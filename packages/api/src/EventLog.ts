@@ -4,9 +4,12 @@ import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
 import type { EncodedEvent } from "@who-pays/shared"
 
+declare const _storeIdBrand: unique symbol
+export type ValidatedStoreId = string & { readonly [_storeIdBrand]: true }
+
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-function tableName(storeId: string): string {
+function tableName(storeId: ValidatedStoreId): string {
   return `eventlog_${storeId.replace(/-/g, "_")}`
 }
 
@@ -14,18 +17,20 @@ export class EventLog extends Effect.Service<EventLog>()("EventLog", {
   effect: Effect.gen(function* () {
     const sql = yield* SqlClient
 
-    const ensureStore = (storeId: string) =>
+    const ensureStore = (storeId: string): Effect.Effect<ValidatedStoreId, Error> =>
       Effect.gen(function* () {
         if (!UUID_PATTERN.test(storeId)) {
-          return yield* Effect.fail(new Error(`Invalid storeId: ${storeId}`))
+          return yield* Effect.fail(new Error("Invalid storeId"))
         }
-        const tbl = tableName(storeId)
+        const validated = storeId as ValidatedStoreId
+        const tbl = tableName(validated)
         yield* sql.unsafe(
           `CREATE TABLE IF NOT EXISTS "${tbl}" (seq INTEGER PRIMARY KEY AUTOINCREMENT, data TEXT NOT NULL, created_at INTEGER NOT NULL DEFAULT (unixepoch('now') * 1000))`
         )
+        return validated
       })
 
-    const append = (storeId: string, events: readonly EncodedEvent[]) =>
+    const append = (storeId: ValidatedStoreId, events: readonly EncodedEvent[]) =>
       Effect.gen(function* () {
         const tbl = tableName(storeId)
         for (const event of events) {
@@ -33,7 +38,7 @@ export class EventLog extends Effect.Service<EventLog>()("EventLog", {
         }
       })
 
-    const getEvents = (storeId: string, afterGlobalSeq: number) =>
+    const getEvents = (storeId: ValidatedStoreId, afterGlobalSeq: number) =>
       Effect.gen(function* () {
         const tbl = tableName(storeId)
         const rows = yield* sql.unsafe(

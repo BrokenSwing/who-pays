@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { nanoid } from "@livestore/livestore"
 import { useState } from "react"
 
 export const Route = createFileRoute("/")({
@@ -11,7 +10,7 @@ function Landing() {
   const [name, setName] = useState("")
 
   function createGroup() {
-    const token = nanoid()
+    const token = crypto.randomUUID()
     navigate({ to: "/g/$groupToken", params: { groupToken: token } })
   }
 

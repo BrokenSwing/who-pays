@@ -1,4 +1,5 @@
 export { schema, events, tables } from "./schema/schema.ts"
+export { KNOWN_EVENT_NAMES } from "./schema/events.ts"
 export { SyncRpcs, EncodedEvent, SyncBatch } from "./rpc/SyncRpc.ts"
 export { computeBalances } from "./domain/balance.ts"
 export { minimizeCashFlow } from "./domain/settlement.ts"

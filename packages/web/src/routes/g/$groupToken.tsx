@@ -1,11 +1,18 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 import { LiveStoreProvider } from "@livestore/react"
 import { unstable_batchedUpdates } from "react-dom"
 import { schema } from "@who-pays/shared"
 import { adapter } from "../../adapter"
 import { GroupInit } from "../../components/GroupInit"
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export const Route = createFileRoute("/g/$groupToken")({
+  beforeLoad: ({ params }) => {
+    if (!UUID_PATTERN.test(params.groupToken)) {
+      throw redirect({ to: "/" })
+    }
+  },
   component: GroupRoute,
 })
 

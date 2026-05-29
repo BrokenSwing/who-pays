@@ -31,7 +31,12 @@ const RpcLayer = RpcServer.layerHttpRouter({
   Layer.provide(InfraLayer)
 )
 
-const AppLayer = Layer.mergeAll(RpcLayer, HttpLayerRouter.cors())
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN ?? "http://localhost:5173"
+
+const AppLayer = Layer.mergeAll(
+  RpcLayer,
+  HttpLayerRouter.cors({ allowedOrigins: [ALLOWED_ORIGIN] })
+)
 
 const ServerLayer = HttpLayerRouter.serve(AppLayer).pipe(
   Layer.provide(NodeHttpServer.layer(() => http.createServer(), { port: PORT })),
