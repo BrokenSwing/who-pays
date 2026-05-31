@@ -67,7 +67,7 @@ function GroupPage() {
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto px-4 py-5 space-y-6">
+      <div className="max-w-2xl mx-auto px-4 py-5 pb-24 space-y-6">
         <MembersCard
           members={members}
           balances={balances}
@@ -77,16 +77,7 @@ function GroupPage() {
         />
 
         <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-foreground">Expenses</h2>
-            <button
-              onClick={() => { setAddExpense(true); setEditId(null) }}
-              className="btn-primary h-8 px-3 gap-1.5 text-xs"
-            >
-              <Plus size={14} />
-              Add
-            </button>
-          </div>
+          <h2 className="text-sm font-semibold text-foreground">Expenses</h2>
 
           {showForm && (
             <ExpenseForm
@@ -100,6 +91,17 @@ function GroupPage() {
 
           <ExpenseList expenses={expenses} members={members} splits={splits} store={store} />
         </section>
+      </div>
+
+      {/* Floating action button */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20">
+        <button
+          onClick={() => { setAddExpense(true); setEditId(null) }}
+          className="btn-primary h-13 px-6 gap-2.5 text-base rounded-full shadow-lg"
+        >
+          <Plus size={18} />
+          Add expense
+        </button>
       </div>
     </div>
   )
