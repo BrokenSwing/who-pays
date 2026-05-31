@@ -222,7 +222,9 @@ export function GroupInit({
     return <CreateGroupForm groupToken={groupToken} onCreated={onMemberSelected} />
   }
 
-  if (currentMemberId === null) {
+  const memberExists = currentMemberId !== null && members.some((m) => m.id === currentMemberId)
+
+  if (!memberExists) {
     return <JoinForm groupToken={groupToken} members={members} onJoined={onMemberSelected} />
   }
 
