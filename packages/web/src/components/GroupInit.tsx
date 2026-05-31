@@ -2,20 +2,26 @@ import { useQuery, useStore } from "@livestore/react"
 import { queryDb, nanoid } from "@livestore/livestore"
 import { events, tables } from "@who-pays/shared"
 import { useState, type ReactNode } from "react"
+import { Link } from "@tanstack/react-router"
 import { Logo } from "./Logo"
 import { Field } from "./Field"
-import { X, Plus } from "lucide-react"
+import { X, Plus, ChevronLeft } from "lucide-react"
 
 const groupQuery$ = queryDb(tables.groups.first({ fallback: () => null }))
 const membersQuery$ = queryDb(tables.members.where({ deletedAt: null }))
 
 // ── Shared card shell ────────────────────────────────────────────────────────
 
-function OnboardingShell({ children }: { children: ReactNode }) {
+function OnboardingShell({ children, showBack = false }: { children: ReactNode; showBack?: boolean }) {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="bg-card rounded-xl shadow-md ring-1 ring-border p-8 w-full max-w-sm space-y-6">
         <div className="flex items-center gap-3">
+          {showBack && (
+            <Link to="/" className="btn-ghost h-8 w-8 p-0 text-muted-foreground shrink-0 -ml-1">
+              <ChevronLeft size={18} />
+            </Link>
+          )}
           <Logo className="w-9 h-9 shrink-0" />
           <h1 className="text-lg font-semibold text-foreground">Who Pays?</h1>
         </div>
@@ -157,7 +163,7 @@ function JoinForm({
   }
 
   return (
-    <OnboardingShell>
+    <OnboardingShell showBack>
       <div>
         <p className="text-sm font-medium text-foreground">Who are you?</p>
         <p className="text-sm text-muted-foreground mt-0.5">Pick your name to see your share.</p>
@@ -208,11 +214,13 @@ export function GroupInit({
   groupToken,
   currentMemberId,
   onMemberSelected,
+  onMemberCleared,
   children,
 }: {
   groupToken: string
   currentMemberId: string | null
   onMemberSelected: (id: string) => void
+  onMemberCleared: () => void
   children: ReactNode
 }) {
   const group = useQuery(groupQuery$)
@@ -225,6 +233,7 @@ export function GroupInit({
   const memberExists = currentMemberId !== null && members.some((m) => m.id === currentMemberId)
 
   if (!memberExists) {
+    if (currentMemberId !== null) onMemberCleared()
     return <JoinForm groupToken={groupToken} members={members} onJoined={onMemberSelected} />
   }
 

@@ -33,6 +33,11 @@ function GroupRoute() {
     [groupToken],
   )
 
+  const handleMemberCleared = useCallback(() => {
+    localStorage.removeItem(`who-pays:member:${groupToken}`)
+    setCurrentMemberId(null)
+  }, [groupToken])
+
   return (
     <CurrentMemberContext.Provider value={{ currentMemberId, setCurrentMemberId: handleMemberSelected }}>
       <LiveStoreProvider
@@ -55,6 +60,7 @@ function GroupRoute() {
           groupToken={groupToken}
           currentMemberId={currentMemberId}
           onMemberSelected={handleMemberSelected}
+          onMemberCleared={handleMemberCleared}
         >
           <Outlet />
         </GroupInit>
