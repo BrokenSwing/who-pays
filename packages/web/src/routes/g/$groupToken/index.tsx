@@ -2,9 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useQuery, useStore } from "@livestore/react"
 import { membersQuery$, expensesQuery$, splitsQuery$, settlementsQuery$, groupQuery$ } from "../../../queries"
 import { computeBalances, minimizeCashFlow } from "@who-pays/shared"
-import { MemberList } from "../../../components/MemberList"
+import { MembersCard } from "../../../components/MembersCard"
 import { ExpenseList } from "../../../components/ExpenseList"
-import { BalanceCard } from "../../../components/BalanceCard"
 import { ExpenseForm } from "../../../components/ExpenseForm"
 import { useAtomValue, useAtomSet } from "@effect-atom/atom-react"
 import { showAddExpense, editingExpenseId } from "../../../atoms"
@@ -69,9 +68,13 @@ function GroupPage() {
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-5 space-y-6">
-        <MemberList members={members} store={store} groupToken={groupToken} />
-
-        <BalanceCard balances={balances} members={members} transfers={transfers} />
+        <MembersCard
+          members={members}
+          balances={balances}
+          transfers={transfers}
+          store={store}
+          groupToken={groupToken}
+        />
 
         <section className="space-y-3">
           <div className="flex items-center justify-between">
