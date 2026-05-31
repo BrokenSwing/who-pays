@@ -223,44 +223,12 @@ export function MembersCard({
             member={m}
             net={balanceByMember.get(m.id) ?? 0}
             showBalance={balances.length > 0}
-            hasBorder={i < members.length - 1 || adding || showTransfers}
+            hasBorder={i < members.length - 1 || showTransfers}
             isCurrent={m.id === currentMemberId}
             store={store}
             onSwitchToMe={setCurrentMemberId}
           />
         ))}
-
-        {adding ? (
-          <div className={`flex items-center gap-2 px-3 py-2 ${showTransfers ? "border-b border-border" : ""}`}>
-            <input
-              autoFocus
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") addMember()
-                if (e.key === "Escape") setAdding(false)
-              }}
-              placeholder="Name"
-              className="input flex-1"
-            />
-            <button onClick={addMember} className="btn-primary shrink-0">Add</button>
-            <button
-              onClick={() => setAdding(false)}
-              className="btn-ghost h-9 w-9 p-0 text-muted-foreground shrink-0"
-            >
-              <X size={15} />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setAdding(true)}
-            className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm text-muted-foreground hover:bg-muted/40 transition-colors ${showTransfers ? "border-b border-border" : ""}`}
-          >
-            <Plus size={14} />
-            Add member
-          </button>
-        )}
 
         {showTransfers && (
           <>
@@ -285,6 +253,38 @@ export function MembersCard({
           </>
         )}
       </div>
+
+      {adding ? (
+        <div className="flex items-center gap-2">
+          <input
+            autoFocus
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") addMember()
+              if (e.key === "Escape") setAdding(false)
+            }}
+            placeholder="Name"
+            className="input flex-1"
+          />
+          <button onClick={addMember} className="btn-primary shrink-0">Add</button>
+          <button
+            onClick={() => setAdding(false)}
+            className="btn-ghost h-9 w-9 p-0 text-muted-foreground shrink-0"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setAdding(true)}
+          className="btn-outline w-full gap-2 text-sm"
+        >
+          <Plus size={14} />
+          Add member
+        </button>
+      )}
     </section>
   )
 }
